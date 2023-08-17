@@ -1,0 +1,120 @@
+{% extends 'base.html' %} {% block title %} Home Page {% endblock %} {% block content %} {% with msgs = get_flashed_messages() %} {% if msgs %} {% for msg in msgs %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{msg}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %} {% endif %} {% endwith %}
+
+<section class="bg-primary min-vh-100 p-4 d-flex align-items-center justify-content-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-6">
+                <img src="{{ url_for('static',filename='img/global.png') }}" alt="" class="img-fluid">
+            </div>
+            <div class="col-6 d-flex align-items-center flex-column justify-content-center">
+                <h1 class="display-1 text-white text-center"> RECRUITMENT SYSTEM</h1>
+                <h1 class="h2 text-center text-white">JOP APPLICANT</h1>
+
+                <div class="d-flex justify-content-evenly bg-dark rounded align-items-center p-3 mt-3">
+                    <div class="d-flex flex-column p-2">
+                        <span class="bg-secondary text-center text-light h5 rounded p-3" id="day">23</span>
+                        <span class="h4 text-light text-center">Days</span>
+                    </div>
+                    <div class="d-flex flex-column p-2">
+                        <span class="bg-secondary text-center text-light h5 rounded p-3" id="hour">23</span>
+                        <span class="h4 text-light text-center">Hours</span>
+                    </div>
+                    <div class="d-flex flex-column p-2">
+                        <span class="bg-secondary text-center text-light h5 rounded p-3" id="minute">23</span>
+                        <span class="h4 text-light text-center">Minutes</span>
+                    </div>
+                    <div class="d-flex flex-column p-2">
+                        <span class="bg-secondary text-center text-light h5 rounded p-3" id="second">23</span>
+                        <span class="h4 text-light text-center">Seconds</span>
+                    </div>
+                </div>
+                <p id="demo"></p>
+                <div class="d-flex justify-content-center mt-4">
+                    <a href="{{ url_for('submitPaper') }}" class="btn btn-warning btn-lg h1 align-items-centers">Submit
+                        Resume  <i class="bi bi-arrow-right-circle"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="bg-dark min-vh-100 py-5">
+    <h1 class="h1 text-light text-center py-5">COMPANY</h1>
+    <div class="container d-flex flex-column g-5">
+        <div class="row d-flex align-items-center justify-content-center my-3">
+            <div class="col-4">
+                <img src="{{ url_for('static',filename='img/berlin.png') }}" alt="" class="img-fluid">
+            </div>
+            <div class="col-8">
+                <div class="container text-light">
+                    <h1 class="h1 display-1 text-warning">INFOSYS</h1>
+                    <h3 class="h3">Manager</h3>
+                    <a href="https://www.infosys.com" class="btn btn-warning btn-lg rounded-pill p-3">
+                        about </i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row d-flex align-items-center justify-content-center my-3">
+            <div class="col-8 text-end">
+                <div class="container text-light flex-grow-1">
+                    <h1 class="h1 display-1 text-info">TCS</h1>
+                    <h3 class="h3">Manager</h3>
+                    <a href="https://www.tcs.com/" class="btn btn-info btn-lg rounded-pill p-3">
+                        about</a>
+                </div>
+            </div>
+            <div class="col-4">
+                <img src="{{ url_for('static',filename='img/singapore.png') }}" alt="" class="img-fluid">
+            </div>
+        </div>
+        <div class="row d-flex align-items-center justify-content-center my-3">
+            <div class="col-4">
+                <img src="{{ url_for('static',filename='img/india.png') }}" alt="" class="img-fluid">
+            </div>
+            <div class="col-8">
+                <div class="container text-light">
+                    <h1 class="h1 display-1 text-warning">HCL</h1>
+                    <h3 class="h3">Manager</h3>
+                    <a href="https://www.hcltech.com/" class="btn btn-warning btn-lg rounded-pill p-3">about</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+<script>
+    var deadline = new Date("dec 31, 2021 15:37:25").getTime();
+
+    var x = setInterval(function() {
+
+        var now = new Date().getTime();
+        var t = deadline - now;
+        var days = Math.floor(t / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((t % (1000 * 60)) / 1000);
+        document.getElementById("day").innerHTML = days;
+        document.getElementById("hour").innerHTML = hours;
+        document.getElementById("minute").innerHTML = minutes;
+        document.getElementById("second").innerHTML = seconds;
+        if (t < 0) {
+            clearInterval(x);
+            document.getElementById("demo").innerHTML = "TIME UP";
+            document.getElementById("day").innerHTML = '0';
+            document.getElementById("hour").innerHTML = '0';
+            document.getElementById("minute").innerHTML = '0';
+            document.getElementById("second").innerHTML = '0';
+        }
+    }, 1000);
+</script>
+
+
+
+
+{% endblock %}

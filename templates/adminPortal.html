@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %} Admin Portal {% endblock %}
+
+{% block content %}
+<section class="min-vh-100 bg-primary p-5">
+  <div class="container">
+    <div class="d-flex flex-row align-items-center justify-content-between">
+      <div class="card" style="width: 15rem;">
+        <div class="card-body">
+          <h5 class="card-title text-center text-primary">Total Papers </h5>
+          <p class="card-text h1 p-4 text-primary text-center">{{data["papers"]}}</p>
+        </div>
+      </div>
+      <div class="card" style="width: 15rem;">
+        <div class="card-body">
+          <h5 class="card-title text-center text-success">Papers Selected</h5>
+          <p class="card-text h1 p-4 text-success text-center">
+            {{data["selected"]}}
+          </p>
+        </div>
+      </div>
+      <div class="card" style="width: 15rem;">
+        <div class="card-body">
+          <h5 class="card-title text-center text-danger">Papers Rejected</h5>
+          <p class="card-text h1 p-4 text-danger text-center">{{data["rejected"]}}</p>
+        </div>
+      </div>
+      <div class="card" style="width: 15rem;">
+        <div class="card-body">
+          <h5 class="card-title text-center text-dark">Papers Pending</h5>
+          <p class="card-text h1 p-4 text-dark text-center">{{data["pending"]}}</p>
+        </div>
+      </div>
+    </div>
+    <div class="container mt-3">
+      <h1 class="h1 text-light text-center">Papers Submitted</h1>
+      <table class="table table-primary table-striped mt-3">
+        <thead>
+          <tr>
+            <th>SI.No</th>
+            <th>Author Name</th>
+            <th>Paper Title</th>
+            <th>Email</th>
+            <th>Keyword</th>
+            <th>Status</th>
+            <th>Operation</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in data["users"] %}
+          {% if (user.author) and (user.title) and (user.paper) %}
+          <tr>
+            <td>{{user.id if user.id}}</td>
+            <td>{{user.author if user.author}}</td>
+            <td>{{user.title if user.title}}</td>
+            <td>{{user.email if user.email}}</td>
+            <td>
+              <p class="badge bg-secondary rounded-pill">{{user.keywords.upper() if user.keywords}}</p>
+            </td>
+            <td>
+              {% if user.status == "Selected" %}
+              <p class="h5 text-success">{{user.status if user.status}}</p>
+              {% elif user.status == "Rejected" %}
+              <p class="h5 text-danger">{{user.status if user.status}}</p>
+              {% else %}
+              <p>{{user.status if user.status}}</p>
+              {% endif %}
+            </td>
+            <td>
+              <!-- Button trigger modal -->
+              {% if user.status == "Selected" %}
+              <button type="button" class="btn btn-success position-relative" data-bs-toggle="modal"
+                data-bs-target="#model{{user.id}}">View <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">!</span></button>
+              {% elif user.status == "Rejected" %}
+              <button type="button" class="btn btn-danger position-relative" data-bs-toggle="modal"
+                data-bs-target="#model{{user.id}}">View </button>
+              {% else %}
+              <button type="button" class="btn btn-primary position-relative" data-bs-toggle="modal"
+                data-bs-target="#model{{user.id}}">View 
+                {% if not user.avenue %}
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">!</span>
+                {% endif %}              
+              </button>
+              {% endif %}
+              <!-- Modal -->
+              <form action="{{ url_for('admin') }}" method="post">
+                <div class="modal fade" id="model{{user.id}}" tabindex="-1" aria-labelledby="exampleModalLabel"
+                  aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered
+                    modal-dialog-scrollable modal-lg">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title text-primary" id="exampleModalLabel">{{user.fname}}'s Abstract</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="container">
+                          <h3 class="h3 text-center">{{user.title.capitalize()}}</h3>
+                          <p class="lead">{{user.paper}}</p>
+                          <figcaption class="blockquote-footer text-end mt-2">
+                            <span class="h5">{{user.fname.capitalize() +" " +user.lname.capitalize()}}</span>
+                            <p class="lead">{{user.email}}</p>
+                          </figcaption>
+                          <h3 class="h3 p-2 rounded-pill badge bg-secondary">{{user.keywords.upper()}}</h3>
+                          <div class="form-floating">
+                            <textarea class="form-control" placeholder="Leave a
+                              comment here" id="floatingTextarea2" name="Comments"
+                              style="height: 100px">{{user.comments if user.comments}}</textarea>
+                            <label for="floatingTextarea2">Comments</label>
+                          </div>
+
+                          
+                          <div class="container bg-dark rounded p-3 mt-5">
+                            <p class="h5 text-center text-light p-3">Hall Allotment</p>
+                            <div class="form-floating mb-2">
+                              <input type="text" class="form-control" id="floatingInput" name="avenue" value="{{user.avenue if user.avenue}}" placeholder=" ">
+                              <label for="floatingInput">Avenue</label>
+                            </div>
+                            <div class="input-group mb-2">
+                              <div class="form-floating flex-grow-1 me-2">
+                                <input type="number" min="0" class="form-control" name="hall" value="{{user.hall if user.hall}}" id="floatingInput">
+                                <label for="floatingInput">Hall Number</label>
+                              </div>
+                              <input type="datetime-local" class="btn btn-light" name="timing" value="{{user.timing if user.timing}}"> 
+                            </div>
+                            <!--<input type="submit" class="btn btn-primary w-100 mb-2" value="Allot Hall" name="allothall">
+                            -->
+                          </div>
+                          
+                                                 
+                        </div>
+                      </div>
+                      <div class="modal-footer justify-content-center">
+                        <input type="hidden" name="Id" value="{{user.id}}">
+                        <input type="submit" class="btn btn-success" value="Accept" name="Accept">
+                        <input type="submit" class="btn btn-danger" value="Reject" name="Reject">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+
+
+          {% endblock %}

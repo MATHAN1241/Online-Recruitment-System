@@ -1,0 +1,185 @@
+{% extends 'base.html' %} {% block title %} Submit Paper {% endblock %} {% block content %}
+<div class="wrapper">
+    {% if (not user.author) and (not user.title) and (not user.paper) %}
+    <section class="bg-primary min-vh-100 position-relative">
+        <form action="{{ url_for('submitPaper') }}" method="post">
+            <div class="container p-5 rounded shadow bg-light position-absolute top-50 start-50 translate-middle" style="max-width: 90vh;">
+                <h2 class="text-center mt-0 mb-4">RESUME APPLY</h2>
+                <div class="d-flex justify-content-between">
+                    <div class="form-floating me-2 w-100">
+                        <input type="text" class="form-control" placeholder=" " name=" First name">
+                        <label>First Name</label>
+                    </div>
+                    <div class="form-floating ms-1 w-100">
+                        <input type="text" class="form-control" placeholder=" " name="lastname">
+                        <label>Last Name</label>
+                    </div>
+                </div>
+
+                <div class="form-floating my-2">
+                    <textarea type="text-area" class="form-control" placeholder="email " name="address" style="height: 100px;"></textarea>
+                    <label>Email Address</label>
+                </div>
+
+                <div class="form-floating my-2">
+                    <input type="text" class="form-control" placeholder=" " name="phone no">
+                    <label>CONTACT</label>
+                </div>
+                <div class="form-floating my-2">
+                    <input type="text" class="form-control" placeholder=" " name="Keywords">
+                    <label>Keywords</label>
+                </div>
+                <div class="form-floating my-2">
+                    <input type="text" class="form-control" placeholder=" " name="Comments">
+                    <label>Comments</label>
+                </div>
+                <hr>
+                <div class="form-group mt-3">
+                    <label class="mr-2">Upload your CV:</label>
+                    <input type="file" name="file">
+                </div>
+                <hr>
+
+                <input type="submit" class="btn btn-primary btn-lg w-100 my-2" value="Submit">
+            </div>
+        </form>
+        {% else %}
+    </section>
+    <section class="bg-primary min-vh-100  w-100 p-5">
+        <div class="container mt-5">
+            <h1 class="text-center my-4  text-light">RESUME UPLOAD</h1>
+            <table class="table table-dark table-striped mt-5">
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email Addres</th>
+                        <th>Keywords</th>
+                        <th>Comments</th>
+                        <th>Status</th>
+                        <th>Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>{{user.author if user.author}}</th>
+                        <td>{{user.title.capitalize() if user.title}}</td>
+                        <td>{{user.email if user.email}}</td>
+                        <td>
+                            <p class="badge bg-secondary rounded-pill">{{user.keywords.upper() if user.keywords}}</p>
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-warning position-relative" data-bs-toggle="modal" data-bs-target="#model{{user.id}}">
+                <i class="bi bi-envelope-open-fill"></i>
+                {% if user.comments %}
+                <span
+                  class="position-absolute top-0 start-100 translate-middle badge border border-dark rounded-circle bg-danger p-2">
+                </span>
+                {% endif %}
+              </button>
+                            <!-- Modal -->
+                            <div class="modal fade" id="model{{user.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title text-dark" id="exampleModalLabel">Comments</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body p-5">
+                                            {% if user.status == "Rejected" %}
+                                            <h3 class="h3 text-danger">{{user.comments if user.comments}}</h3>
+                                            <p class="h1 text-center text-dark">Hall Allotment</p>
+                                            {% elif user.status == "Selected" %}
+                                            <h3 class="h3 text-success">{{user.comments if user.comments}}</h3>
+                                            <hr class="bg-dark mt-5">
+                                            <p class="lead text-center text-dark">Hall Allotment</p>
+                                            <table class="table table-bordered border-primary">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Avenue</th>
+                                                        <th scope="col">Timing</th>
+                                                        <th scope="col">Hall</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th scope="row">{{user.avenue}}</th>
+                                                        <td>{{user.timing}}</td>
+                                                        <td>{{user.hall}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            {% else %}
+                                            <h3 class="h3 text-primary">Your Paper will be Reviewed Soon</h3>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if user.status == "Rejected" %}
+                            <p class="h4 text-danger">{{user.status if user.status}}</p>
+                            {% elif user.status == "Selected" %}
+                            <p class="h4 text-success">{{user.status if user.status}}</p>
+                            {% else %}
+                            <p class="h4">{{user.status if user.status}}</p>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user.status != "Selected" %}
+                            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions"><i
+                  class="bi bi-pen"></i></button>
+                            <a href="{{ url_for('deletePaper') }}" class="btn btn-danger"><i class="bi bi-trash-fill"></i></a> {% else %}
+                            <p class="h4 text-success">{{user.status}}</p>
+                            {% endif %}
+                            <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+                                <div class="offcanvas-header">
+                                    <h5 class="offcanvas-title text-dark" id="offcanvasWithBothOptionsLabel">Edit Paper</h5>
+                                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                </div>
+                                <div class="offcanvas-body">
+                                    <div class="container text-dark">
+                                        <form action="{{ url_for('submitPaper') }}" method="POST">
+                                            <div class="form-floating my-2">
+                                                <input type="text" class="form-control" placeholder=" " name="First" value="{{user.author if user.author}}" />
+                                                <label>First Name</label>
+                                            </div>
+                                            <div class="form-floating my-2">
+                                                <input type="text" class="form-control" placeholder=" " name="Last" value="{{user.title if user.title}}" />
+                                                <label>Last Name</label>
+                                            </div>
+
+                                            <div class="form-floating my-2">
+                                                <textarea type="text-area" class="form-control" placeholder="email" style="height: 100px;" name="Paper">{{user.paper if user.paper}}</textarea>
+                                                <label>Email Address</label>
+                                            </div>
+                                            <div class="form-floating my-2">
+                                                <input type="text" class="form-control" placeholder=" " name="Contacts" value="{{user.keywords if user.keywords}}" />
+                                                <label>Contacts</label>
+                                            </div>
+                                            <div class="form-floating my-2">
+                                                <input type="text" class="form-control" placeholder=" " name="Keywords" value="{{user.keywords if user.keywords}}" />
+                                                <label>Keywords</label>
+                                            </div>
+                                            <div class="form-floating my-2">
+                                                <input type="text" class="form-control" placeholder=" " name="Comments" value="{{user.keywords if user.keywords}}" />
+                                                <label>Comments</label>
+                                            </div>
+
+                                            <input type="submit" class="btn btn-primary btn-lg w-100 my-2" value="Edit Paper">
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {% endif %}
+
+</div>
+{% endblock %}
